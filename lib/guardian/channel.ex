@@ -40,11 +40,7 @@ defmodule Guardian.Channel do
 
     quote do
       def join(room, auth = %{ "guardian_token" => jwt }, socket) do
-        handle_guardian_join(room, jwt, %{ }, socket)
-      end
-
-      def join(room, auth = %{ "guardian_token" => jwt, "params" => params }, socket) do
-        handle_guardian_join(room, jwt, params, socket)
+        handle_guardian_join(room, jwt, Dict.delete(auth, "guardian_token"), socket)
       end
 
       def handle_guardian_auth_failure(reason), do: { :error, %{ error: reason } }
