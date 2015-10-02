@@ -43,6 +43,10 @@ defmodule Guardian.Channel do
         handle_guardian_join(room, jwt, %{ }, socket)
       end
 
+      def join(room, auth = %{ "guardian_token" => jwt, "params" => params }, socket) do
+        handle_guardian_join(room, jwt, params, socket)
+      end
+
       def handle_guardian_auth_failure(reason), do: { :error, %{ error: reason } }
 
       defp handle_guardian_join(room, jwt, params, socket) do
@@ -53,7 +57,7 @@ defmodule Guardian.Channel do
                 authed_socket = socket
                 |> assign(Guardian.Keys.claims_key(unquote(key)), claims)
                 |> assign(Guardian.Keys.resource_key(unquote(key)), resource)
-                join(room, %{ claims: claims, resource: resource }, authed_socket)
+                join(room, %{ claims: claims, resource: resource, params: params }, authed_socket)
               { :error, reason } -> handle_guardian_auth_failure(reason)
             end
           { :error, reason } -> handle_guardian_auth_failure(reason)
